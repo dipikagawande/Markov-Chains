@@ -1,0 +1,590 @@
+---
+title: "Markov Chain Problem Set"
+subtitle: "Dipika Gawande | 04 November 2021"
+output:
+  pdf_document: default
+  html_document: default
+  header-includes:
+  - \usepackage[fleqn]{amsmath}
+---
+
+Note: this is an adaptation of a problem set I submitted for a class I took in my first semester Masters, "Probability & Statistics".
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+```
+
+# 1 Not Markov
+
+Moving average models are used in time series analysis in many fields. For these models we
+assume there is an underlying unobserved process $...Y_{-1},Y_0,Y_1,...$ of iid random variables, and the moving average process $X$ will just take averages of some of the $Y$ random variables. Suppose the $Y_t$ RVs take the two values -1 and 1 with equal probability. That is, $P\{Y_t = 1\} = \frac{1}{2} = P\{Y_t = 1\}$. For each t define $X_t = \frac{1}{2}(Y_{t-1} + Yt)$.
+
+## 1(a) 
+
+Show that $X_0, X_1, ...$ is not a Markov chain.
+
+-----------
+
+**Ans:** Proof by contradiction. Find a counterexample that shows that the process is NOT path-independent. If this process were Markovian, then:
+
+$P(X_2 = k | X_1 = j, X_0 = {\bf i_1 }) = P(X_2 = k | X_1 = j, X_0 = {\bf i_2})$. 
+
+That is, the probability of $X_2 = k$ should depend ONLY on the state attained by $X_1$, and should not be affected by the state attained by $X_0$. If we change the $X_0$ state and the probability of $X_2 = k$ changes as a result, then this process is not a Markov Chain.
+
+**Counterexample:**
+
+$\begin{aligned}
+\bf P(X_2 = 1 | X_1 = 0, X_0 = 1) &\neq \bf P(X_2 = 1 | X_1 = 0, X_0 = -1) \\
+\\
+\end{aligned}$
+
+
+To realize the LHS:
+
+$y_{-1}$ | $y_0$ | $y_1$ | $y_2$ |
+---------|-------|-------|-------|
+???      | -1    | 1     |  1    |
+
+To realize the RHS:
+
+$y_{-1}$ | $y_0$ | $y_1$ | $y_2$ |
+---------|-------|-------|-------|
+-1       | -1    | 1     |  1    |
+
+$\begin{aligned}
+P(X_2 = 1 | X_1 = 0, X_0 = 1) &\neq P(X_2 = 1 | X_1 = 0, X_0 = -1) \\
+\frac{P(X_2 = 1, X_1 = 0, X_0 = 1)}{P(X_1 = 0, X_0 = 1)} &\neq \frac{P(X_2 = 1, X_1 = 0, X_0 = -1)}{P(X_1 = 0, X_0 = -1)}\\
+0    &\neq \frac{(\frac{1}{2})^4}{(\frac{1}{2})^3} \\
+0    &\neq \frac{1}{2} \\
+\end{aligned}$
+
+**Ans:** Changing the $X_0$ state changes the probability of $X_2 = 1$. This means this process does not obey the Markov property and is therefore not a Markov Chain (of order 1).
+
+
+## 1(b)
+
+Show that $\{X_t\}$ is not a Markov chain of order $r$ for any $r$.
+
+-----------
+
+**Ans:** Contradiction and induction. Show counterexamples that prove this process is not a Markov Chain of order 2, or 3 (we have already shown it is not a Markov Chain of order 1 above). Then make the general statement.
+
+* **Not a Markov Chain of Order = 2:**
+
+$\begin{aligned}
+P(X_3 = 1 | X_2 = 0, X_1 = 0, X_0 = 1) &\neq P(X_3 = 1 | X_2 = 0, X_1 = 0, X_0 = -1) \\
+\end{aligned}$
+
+To realize the LHS:
+
+$y_{-1}$ | $y_0$ | $y_1$ | $y_2$ |$y_3$  |
+---------|-------|-------|-------|-------|
+ 1       |  1    | -1    |  1    | 1     |
+ 
+ To realize the RHS:
+ 
+$y_{-1}$ | $y_0$ | $y_1$ | $y_2$ |$y_3$  |
+---------|-------|-------|-------|-------|
+ ???     |  1    | -1    |  1    | 1     |
+ 
+$\begin{aligned}
+P(X_3 = 1 | X_2 = 0, X_1 = 0, X_0 = 1) &\neq P(X_3 = 1 | X_2 = 0, X_1 = 0, X_0 = -1) \\
+\frac{P(X_3 = 1, X_2 = 0, X_1 = 0, X_0 = 1)}{P(X_2 = 0, X_1 = 0, X_0 = 1)} &\neq \frac{P(X_3 = 1, X_2 = 0, X_1 = 0, X_0 = -1)}{P(X_2 = 0, X_1 = 0, X_0 = -1)}\\
+\frac{(\frac{1}{2})^5}{(\frac{1}{2})^4}    &\neq 0 \\
+ \frac{1}{2}  &\neq 0 \\
+\end{aligned}$
+
+
+* **Not a Markov Chain of Order = 3:**
+
+$\begin{aligned}
+P(X_4 = 1 | X_3 = 0, X_2 = 0, X_1 = 0, X_0 = 1) &\neq P(X_4 = 1 | X_3 = 0, X_2 = 0, X_1 = 0, X_0 = -1) \\
+\end{aligned}$
+
+To realize the LHS:
+
+$y_{-1}$ | $y_0$ | $y_1$ | $y_2$ |$y_3$  | $y_4$ |
+---------|-------|-------|-------|-------|-------|
+ ???     |  -1   | 1     |  -1   | 1     |1      |
+ 
+ To realize the RHS:
+ 
+$y_{-1}$ | $y_0$ | $y_1$ | $y_2$ |$y_3$  | $y_4$ |
+---------|-------|-------|-------|-------|-------|
+-1       |  -1   | 1     |  -1   | 1     |1      |
+ 
+$\begin{aligned}
+P(X_4 = 1 | X_3 = 0, X_2 = 0, X_1 = 0, X_0 = 1) &\neq P(X_4 = 1 | X_3 = 0, X_2 = 0, X_1 = 0, X_0 = -1) \\
+\frac{P(X_4 = 1, X_3 = 0, X_2 = 0, X_1 = 0, X_0 = 1)}{P(X_3 = 0, X_2 = 0, X_1 = 0, X_0 = 1)} &\neq \frac{P(X_4 = 1, X_3 = 0, X_2 = 0, X_1 = 0, X_0 = -1)}{P(X_3 = 0, X_2 = 0, X_1 = 0, X_0 = -1)}\\
+ 0   &\neq \frac{(\frac{1}{2})^6}{(\frac{1}{2})^5} \\
+ 0 &\neq  \frac{1}{2}  \\
+\end{aligned}$
+
+* **Not a Markov Chain of any Order = r:**
+
+**Ans:** Seeing the pattern emerge, we can say that this process is not a Markov Chain of any order r, because of the following general counterexample:
+
+$P(X_{t+1} = 1 | X_t = 0, X_{t-1} = 0, ..., {\bf X_0 = -1}) \neq P(X_{t+1} = 1 | X_t = 0, X_{t-1} = 0, ..., X_{t-r+1} = 0, {\bf X_{t-r} = 1})$
+
+
+
+# 2 Google "Page Rank"
+
+## 2(a)
+
+Imagine a little, tiny web of just 3 pages, with:
+
+* page 1 containing a link to page 2 and a link to page 3,
+* page 2 containing only a link to page 3,
+* page 3 containing only a link to page 1.
+
+Let p = 0.7. Write down the probability transition matrix for a random surfer.
+
+-------
+**Ans:**
+
+Find the transition probabilities:
+
+* P(Moving from Page 1 to...
+
+  ...Page 1) = $(0.7)0 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.1 \\$ 
+  ...Page 2) = $(0.7)0.5 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.45 \\$
+  ...Page 3) = $(0.7)0.5 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.45 \\$
+  
+* P(Moving from Page 2 to...
+
+  ...Page 1) = $(0.7)0 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.1 \\$ 
+  ...Page 2) = $(0.7)0 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.1 \\$
+  ...Page 3) = $(0.7)1 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.8 \\$  
+  
+    
+* P(Moving from Page 3 to...
+
+  ...Page 1) = $(0.7)1 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.8 \\$ 
+  ...Page 2) = $(0.7)0 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.1 \\$
+  ...Page 3) = $(0.7)0 + (\frac{3}{10})(\frac{1}{3}) = \bf 0.1 \\$  
+  
+  
+**Ans: Therefore the probability transition matrix P for this Markov Chain is:**
+
+$\begin{bmatrix}
+0.1 & 0.45 & 0.45 \\
+0.1 & 0.1 & 0.8 \\
+0.8 & 0.1 & 0.1 \\
+\end{bmatrix}$
+
+## 2(b)
+
+Find the stationary probabilities in two ways: [1] by solving linear equations by hand, and [2] by raising the probability transition matrix to a large power using R.
+
+**Ans:**
+
+* [1] Find the stationary probabilities ($\overset{\rightarrow}\pi$) by solving the linear equations. 
+
+We know $\overset{\rightarrow}\pi_{t+1} = \overset{\rightarrow}\pi_tP. \\$
+If we define $\underset{t\rightarrow\infty}{lim}\overset{\rightarrow}\pi_0 = \overset{\rightarrow}\pi$, then in the limit as $t \rightarrow\infty: \\$
+
+$\overset{\rightarrow}\pi = \overset{\rightarrow}\pi P \\$
+
+Which (for this problem) is equal to the equation:
+$[\pi_1, \pi_2, \pi_3] = [\pi_1, \pi_2, \pi_3] \big[\begin{smallmatrix} 0.1 & 0.45 & 0.45 \\ 0.1 & 0.1 & 0.8 \\ 0.8 & 0.1 & 0.1 \\ \end{smallmatrix}\big]$ 
+
+So the system of linear equations we need to solve is: 
+
+* $\pi_1 = 0.1\pi_1 + 0.1\pi_2 + 0.8\pi_3$
+* $\pi_2 = 0.45\pi_1 + 0.1\pi_2 + 0.1\pi_3$
+* $\pi_3 = 0.45\pi_1 + 0.8\pi_2 + 0.1\pi_3$
+
+Re-arrange:
+
+* $0 = -0.9\pi_1 + 0.1\pi_2 + 0.8\pi_3$
+* $0 = 0.45\pi_1 - 0.9\pi_2 + 0.1\pi_3$
+* $0 = 0.45\pi_1 + 0.8\pi_2 - 0.9\pi_3$
+
+Use Gaussian elimination to solve this system:
+
+$\begin{bmatrix}
+-0.9 & 0.1 & 0.8 \\
+0.45 & -0.9 & 0.1 \\
+0.45 & 0.8 & -0.9 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+-0.9 & 0.1 & 0.8 \\
+0 & -0.85 & 0.5 \\
+0 & 0.85 & -0.5 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+-0.9 & 0.1 & 0.8 \\
+0 & -0.85 & 0.5 \\
+0 & 0 & 0 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+-0.9 & 1.46 & 0 \\
+0 & -0.85 & 0.5 \\
+0 & 0 & 0 \\
+\end{bmatrix}$
+
+So $\pi_3$ is a free variable. The result of elimination yields the system:
+
+* $-0.9\pi_1 + 1.46\pi_2 = 0$
+* $-0.85\pi_2 + 0.5\pi_3 = 0$
+
+Re-arrange in terms of $\pi_3$:
+
+$\begin{aligned}
+\pi_2    &= \frac{0.5}{0.8}\pi_3 \\
+         &= 0.58824\pi_3 \\
+\pi_1    &= \frac{1.46}{0.9}\pi_2 \\
+         &= \frac{1.46}{0.9}\left(\frac{10}{17}\pi_3\right) \\
+         &= 0.95425\pi_3 \\
+\end{aligned}$
+
+Now solve for free variable $\pi_3$ using the constraint that $\pi_1 + \pi_2 + \pi_3= 1$:
+
+$\begin{aligned}
+1     &= \pi_1 + \pi_2 + \pi_3 \\
+      &= 0.95425\pi_3 + 0.58824\pi_3 + \pi_3 \\
+      &= 2.54248\pi_3 \\
+\pi_3 &= 0.39332 \\
+\end{aligned}$
+
+This means:
+
+* $\pi_1 = 0.37532 \\$
+* $\pi_2 = 0.23136 \\$
+* $\pi_3 = 0.39332 \\$
+
+**Ans:** $\bf{\overset{\rightarrow}\pi = [0.37532, 0.23136, 0.39332]}$.
+
+* [2] Find the stationary probabilities ($\overset{\rightarrow}\pi$) by raising the matrix P to a high power:
+
+First write the function matpow which will calculate matrix power $P^t$ for t > 1:
+
+```{r}
+matpow = function(P,t) {
+  answer <- P
+  
+  for(i in 1:(t)) {
+    answer <- answer %*% P
+  }
+  
+  return(answer)
+}
+```
+
+Calculate $\pi_t = \pi_0P^t$ for t=1000. I will assign a uniform distribution for $\pi_0$. It shouldn't matter in the long run what $\pi_0$ started out as.
+
+```{r}
+P <- rbind(c(0.1, 0.45, 0.45), c(0.1, 0.1, 0.8), c(0.8, 0.1, 0.1))
+P
+
+pi_0 <- c((1/3), (1/3), (1/3))
+pi_t <- pi_0 %*% (matpow(P, 1000))
+pi_t
+```
+
+**Ans: Checks out!**
+
+## 2(c)
+
+So which page does PageRank rank highest, second highest, and last?
+
+**Ans: PageRank will rank:**
+
+* **Page 3 highest**
+* **Page 1 second highest**
+* **Page 2 last**
+
+
+# 3 Fred's Transition Matrix
+
+Fred walks to and from work each day. He owns a total of 3
+umbrellas; at a given point in time (except when Fred is walking) some of these will be at his office and the rest will be at home. If he is leaving home in the morning (or leaving work in the evening) and it is raining, Fred carries an umbrella, if one of his umbrellas is available at his current location – otherwise, he gets wet. He never takes an umbrella to or from work if it is not raining, fearing that spectators will feel he looks neurotic carrying an umbrella on a dry day.† Assume that, independent of the past, it rains on each trip (he makes two trips per day) with probability 0.2.
+
+## 3(a)
+Formulate a Markov chain by letting $X_t$ be the number of umbrellas at Fred’s current location just before he embarks on trip number t. What is its probability transition matrix?
+
+
+**Ans:**
+
+$X_t$ = # of umbrellas at current location before trip t.
+
+Find the transition probabilities:
+
+* P(Moving from a place with 0 umbrellas to a place with...
+
+  ...0 umbrellas) = $0 \\$
+  ...1 umbrella)  = $0 \\$ 
+  ...2 umbrellas) = $0 \\$
+  ...3 umbrellas) = $1 \\$
+  
+* P(Moving from a place with 1 umbrella to a place with...
+
+  ...0 umbrellas) = $0 \\$
+  ...1 umbrella)  = $0 \\$ 
+  ...2 umbrellas) = $0.8 \, (not\, raining) \\$
+  ...3 umbrellas) = $0.2 \, (raining) \\$
+  
+    
+* P(Moving from a place with 2 umbrellas to a place with...
+
+  ...0 umbrellas) = $0 \\$
+  ...1 umbrella)  = $0.8 \, (not\, raining) \\$
+  ...2 umbrellas) = $0.2 \, (raining) \\$
+  ...3 umbrellas) = $0 \\$
+  
+* P(Moving from a place with 3 umbrellas to a place with...
+
+  ...0 umbrellas) = $0.8 \, (not\, raining) \\$
+  ...1 umbrella)  = $0.2 \, (raining) \\$
+  ...2 umbrellas) = $0 \\$
+  ...3 umbrellas) = $0 \\$
+  
+**Ans: Therefore the probability transition matrix P for this Markov Chain is:**
+
+$\begin{bmatrix}
+0 & 0 & 0 & 1 \\
+0 & 0 & 0.8 & 0.2 \\
+0 & 0.8 & 0.2 & 0 \\
+0.8 & 0.2 & 0 & 0 \\
+\end{bmatrix}$
+  
+
+## 3(b)
+
+Calculate the stationary distribution of the Markov chain X by hand (by solving linear equations).
+
+**Ans:**
+
+* [1] Find the stationary probabilities ($\overset{\rightarrow}\pi$) by solving the linear equations. 
+
+We know $\overset{\rightarrow}\pi_{t+1} = \overset{\rightarrow}\pi_tP. \\$
+If we define $\underset{t\rightarrow\infty}{lim}\overset{\rightarrow}\pi_0 = \overset{\rightarrow}\pi$, then in the limit as $t \rightarrow\infty: \\$
+
+$\overset{\rightarrow}\pi = \overset{\rightarrow}\pi P \\$
+
+Which (for this problem) is equal to the equation:
+$[\pi_1, \pi_2, \pi_3, \pi_4] = [\pi_1, \pi_2, \pi_3, \pi_4] \big[\begin{smallmatrix} 0 & 0 & 0 & 1 \\ 0 & 0 & 0.8 & 0.2 \\ 0 & 0.8 & 0.2 & 0 \\ 0.8 & 0.2 & 0 & 0 \\ \end{smallmatrix}\big]$ 
+
+So the system of linear equations we need to solve is: 
+
+* $\pi_1 = 0.8\pi_4$
+* $\pi_2 = 0.8\pi_3 + 0.2\pi_4$
+* $\pi_3 = 0.8\pi_2 + 0.2\pi_3$
+* $\pi_4 = \pi_1 + 0.2\pi_2$
+
+Re-arrange:
+
+* $0 = -\pi_1 + 0.8\pi_4$
+* $0 = -\pi_2 + 0.8\pi_3 + 0.2\pi_4$
+* $0 = 0.8\pi_2 + -0.8\pi_3$
+* $0 = \pi_1 + 0.2\pi_2 - \pi_4$
+
+Use Gaussian elimination to solve this system:
+
+$\begin{bmatrix}
+-1 & 0 & 0 & 0.8 \\
+0 & -1 & 0.8 & 0.2 \\
+0 & 0.8 & -0.8 & 0 \\
+1 & 0.2 & 0 & -1 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+-1 & 0 & 0 & 0.8 \\
+0 & 1 & -0.8 & -0.2 \\
+0 & 0.8 & -0.8 & 0 \\
+0 & 0.2 & 0 & -0.2 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+-1 & 0 & 0 & 0.8 \\
+0 & 1 & -0.8 & -0.2 \\
+0 & 0.8 & -0.16 & 0.16 \\
+0 & 0 & 0.16 & -0.16 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+1 & 0 & 0 & -0.8 \\
+0 & 1 & -0.8 & -0.2 \\
+0 & 0.8 & -0.8 & 0.8 \\
+0 & 0 & 0.16 & -0.16 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+1 & 0 & 0 & -0.8 \\
+0 & 1 & 0 & -1 \\
+0 & 0 & 1 & -1 \\
+0 & 0 & 0.16 & -0.16 \\
+\end{bmatrix}$
+
+$\begin{bmatrix}
+1 & 0 & 0 & -0.8 \\
+0 & 1 & 0 & -1 \\
+0 & 0 & 1 & -1 \\
+0 & 0 & 0 & 0 \\
+\end{bmatrix}$
+
+So $p_4$ is a free variable. The result of elimination yields the system:
+
+* $\pi_1 - 0.8\pi_4 = 0$
+* $\pi_2 - \pi_4 = 0$
+* $\pi_3 - \pi_4 = 0$
+
+Re-arrange in terms of $p_4$:
+
+* $\pi_1 = 0.8\pi_4$
+* $\pi_2 = \pi_4$
+* $\pi_3 = \pi_4$
+
+Now solve for $\pi_4$ using substitution and the constraint that $\pi_1 + \pi_2 + \pi_3 + \pi_4 = 1$:
+
+$\begin{aligned}
+\pi_1 + \pi_2 + \pi_3 + \pi_4 &= 1 \\
+0.8\pi_4 + 3\pi_4 &= 1 \\
+3.8\pi_4           &= 1 \\
+\pi_4             &= \frac{1}{3.8} \\
+\pi_4             &= \frac{5}{19} \\
+\end{aligned}$ 
+
+This means:
+
+* $\pi_1 = 0.8(\frac{5}{19}) = \frac{4}{19} \\$
+* $\pi_2 = \frac{5}{19} \\$
+* $\pi_3 = \frac{5}{19} \\$
+* $\pi_4 = \frac{5}{19} \\$
+
+**Ans:** $\bf{\overset{\rightarrow}\pi = \left[\frac{4}{19}, \frac{5}{19}, \frac{5}{19}, \frac{5}{19}\right]}$.
+
+## 3(c)
+
+Check answer to (3b) by computing $\pi_t = \pi_0P^t$ for a very large power t. 
+```{r}
+P <- rbind(c(0,0,0,1), c(0,0,0.8,0.2), c(0,0.8,0.2,0), c(0.8,0.2,0,0))
+P
+```
+
+Using the matpow function we wrote in #2, calculate $\pi_t = \pi_0P^t$ for t=1000. I will assign a uniform distribution for $\pi_0$. It shouldn't matter in the long run what $\pi_0$ started out as.
+
+```{r}
+pi_0 <- c(.25, .25, .25, .25)
+pi_t <- fractions(pi_0 %*% (matpow(P, 1000)))
+pi_t
+```
+
+**Ans: Checks out!**
+
+## 3(d)
+
+In the limit, the fraction of trips where Fred gets wet are the fraction of trips where:
+
+* he is embarking from a location with 0 umbrellas at time t $\{X_t = 0\}$ AND
+* it is raining. 
+
+These are independent events. We know:
+
+$\begin{aligned}
+\underset{t\rightarrow\infty}{lim} P\{X_t = 0\}  &= \pi_1 = \frac{4}{19} \\
+P\{raining\}   &= 0.2 \\
+\end{aligned}$ 
+
+Therefore:
+
+$\begin{aligned}
+\underset{t\rightarrow\infty}{lim}P\{wet \, Fred\} &= \underset{t\rightarrow\infty}{lim}P\{X_t = 0\} \times P\{raining\} \\
+                      &= \frac{4}{19} \times 0.2 \\
+                      &= \bf 0.0421 \\
+\end{aligned}$ 
+
+**Ans: The limiting fraction of trips where Fred gets wet is 0.0421.**
+
+## 4 LOTE and Markov Chains
+
+In the traditional Markovian marriage ceremony, the bride frog and groom frog perform Markov chains simultaneously on the state space $\{1, 2\}$. Call the bride’s chain $X_0, X_1,...$ and the groom’s chain $Y_0, Y_1,...$. At the start of the ceremony (time 0), the bride starts in state 1 and the groom starts in state 2; that is, $X_0 = 1$ and $Y_0 = 2$. The X and Y chains are performed independently with transition matrices $P_X = \begin{bmatrix}
+  3 & 7 \\ 
+  2 & 8
+\end{bmatrix}$ 
+and $P_Y = \begin{bmatrix}
+  2 & 8 \\ 
+  9 & 1
+\end{bmatrix}$ respectively. The ceremony ends when the bride and groom meet, visiting the same state at the same time. That is, the duration of the ceremony is the random variable 
+T = inf$\{t : X_t = Y_t\}$, where the “inf” of a nonempty set of numbers is the minimum of the numbers (“inf” is for “infimum”). Find the expected value of T.
+
+**Ans:**
+
+$\begin{aligned}
+E_{12}(T)     &= E(T | X_0 = 1, Y_0 = 2) \\
+                &= E(T|X_1 = 1, Y_1 = 1)P(X_1=1, Y_1=1) + E(T|X_1 = 1, Y_1 = 2)P(X_1=1, Y_1=2) \\
+                &+ E(T|X_1 = 2, Y_1 = 1)P(X_1=2, Y_1=1) + E(T|X_1 = 2, Y_1 = 2)P(X_1=2, Y_1=2) \\
+                &= (1)(0.3)(0.9) + (1+E_{12}(T))(0.3)(0.1) + (1+E_{21})(0.7)(0.9) + (1)(0.7)(0.1) \\
+                &= 0.27 + 0.03 + 0.03E_{12}(T) + 0.63 + 0.63(E_{21}(T)) + 0.07 \\
+                &= 1 + 0.03E_{12}(T) + 0.63(E_{21}(T)) \\
+\bf 1           &= \bf 0.97E_{12}(T) - 0.63E_{21}(T) \\
+\end{aligned}$
+
+$\begin{aligned}
+E_{21}(T)     &= E(T | X_0 = 2, Y_0 = 1) \\
+                &= E(T|X_1 = 1, Y_1 = 1)P(X_1=1, Y_1=1) + E(T|X_1 = 1, Y_1 = 2)P(X_1=1, Y_1=2) \\
+                &+ E(T|X_1 = 2, Y_1 = 1)P(X_1=2, Y_1=1) + E(T|X_1 = 2, Y_1 = 2)P(X_1=2, Y_1=2) \\
+                &= (1)(0.2)(0.2) + (1+E_{12}(T))(0.2)(0.8) + (1+E_{21})(0.8)(0.2) + (1)(0.8)(0.8) \\
+                &= 0.04 + 0.16 + 0.16E_{12}(T) + 0.16 + 0.16(E_{21}(T)) + 0.64 \\
+                &= 1 + 0.16E_{12}(T) + 0.16(E_{21}(T)) \\
+\bf 1           &= \bf -0.16E_{12}(T) + 0.84E_{21}(T) \\
+\end{aligned}$
+
+Now we have a system of two equations and can solve for $E_{12}(T)$:
+
+* $1 = 0.97E_{12}(T) - 0.63E_{21}(T)$
+* $1 = -0.16E_{12}(T) + 0.84E_{21}(T)$
+
+Isolate $E_{21}(T)$ from Equation 1...
+
+$\begin{aligned}
+E_{21}(T)     &= \frac{1 - 0.97E_{12}(T)}{-0.63} \\
+\end{aligned}$
+
+...and plug it into Equation 2 to solve for $E_{12}(T)$:
+
+$\begin{aligned}
+1             &= -0.16E_{12}(T) + 0.84\left(\frac{1 - 0.97E_{12}(T)}{-0.63} \right) \\
+1             &= -0.16E_{12}(T) - 1.333 + 1.293E_{12}(T) \\ 
+1             &= 1.133E_{12}(T) - 1.333  \\ 
+E_{12}(T)     &= \frac{2.333}{1.133} \\
+              &= \bf 2.059 \\
+\end{aligned}$
+
+**Ans:** $\bf E_{12}(T) = 2.059$
+
+
+## 5 Simulation
+
+```{r}
+set.seed(6)
+
+P_bride <- rbind(c(0.3, 0.7), c(0.2, 0.8))
+P_groom <- rbind(c(0.2, 0.8), c(0.9, 0.1))
+
+results_t <- NULL
+
+for (i in 1:10000){
+  t = 0
+  bride_state = 1
+  groom_state = 2
+  
+  while(!identical(bride_state, groom_state)) {
+    bride_state <- sample(1:2, 1, prob = P_bride[bride_state, ])
+    groom_state <- sample(1:2, 1, prob = P_groom[groom_state, ])
+    t <- t + 1
+  }
+  
+  results_t[i] <- t
+}
+
+mean(results_t)
+
+```
+
+**Ans: The average time t given initial bride state $X_0 = 1$ and initial groom state $Y_0 = 2$ is 2.059, consistent with our answer from #4.**
